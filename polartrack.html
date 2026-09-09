@@ -25,6 +25,14 @@
       --color-ring: #1E40AF;
       --color-destructive: #DC2626;
       --color-on-destructive: #FFFFFF;
+      --color-hero-end: #E8F0FE;
+      --color-hero-glow: rgba(85, 163, 248, 0.1);
+      --color-primary-hover: #1E40AF;
+      --color-toolbar-bg: #F8FAFC;
+      --color-hero-canvas: #FAFBFC;
+      --color-hero-grid: #E2E8F0;
+      --color-map-ocean: #E8F4FD;
+      --color-map-grid: #C8DDF0;
       --font-heading: 'Fira Code', monospace;
       --font-body: 'Fira Sans', sans-serif;
     }
@@ -111,7 +119,7 @@
       display: flex;
       align-items: center;
       padding: 6rem 2rem 4rem;
-      background: linear-gradient(180deg, var(--color-bg) 0%, #E8F0FE 100%);
+      background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-hero-end) 100%);
       position: relative;
       overflow: hidden;
     }
@@ -123,7 +131,7 @@
       right: -20%;
       width: 800px;
       height: 800px;
-      background: radial-gradient(circle, rgba(85, 163, 248, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, var(--color-hero-glow) 0%, transparent 70%);
       border-radius: 50%;
     }
 
@@ -182,7 +190,7 @@
     }
 
     .btn-primary:hover {
-      background: #1E40AF;
+      background: var(--color-primary-hover);
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(40, 86, 191, 0.3);
     }
@@ -286,7 +294,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 1rem 1.5rem;
-      background: #F8FAFC;
+      background: var(--color-toolbar-bg);
       border-bottom: 1px solid var(--color-border);
       flex-wrap: wrap;
       gap: 1rem;
@@ -314,10 +322,12 @@
     .legend-dot.ship { background: var(--color-primary); }
     .legend-dot.iceberg { background: var(--color-secondary); }
     .legend-dot.hazard { background: var(--color-accent); }
+    .legend-dot.point { background: #10B981; }
 
     .viz-controls {
       display: flex;
       gap: 0.5rem;
+      align-items: center;
     }
 
     .control-btn {
@@ -342,16 +352,162 @@
       border-color: var(--color-primary);
     }
 
+    .wind-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--color-muted-fg);
+      background: white;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+    }
+
+    .wind-control input[type="range"] {
+      width: 100px;
+    }
+
+    .wind-control span {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--color-primary);
+      min-width: 50px;
+      text-align: center;
+    }
+
     #map-canvas {
       width: 100%;
       height: 600px;
       cursor: crosshair;
     }
 
+    .map-wrapper {
+      position: relative;
+    }
+
+    .ship-panel {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.12);
+      padding: 1rem;
+      z-index: 50;
+      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateX(20px);
+      pointer-events: none;
+    }
+
+    .ship-panel.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .ship-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .ship-panel-header h4 {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      color: var(--color-fg);
+    }
+
+    .ship-panel-close {
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--color-muted-fg);
+      line-height: 1;
+      padding: 0 0.25rem;
+    }
+
+    .ship-panel-close:hover {
+      color: var(--color-destructive);
+    }
+
+    .ship-panel-body {
+      font-size: 0.82rem;
+      color: var(--color-muted-fg);
+    }
+
+    .ship-panel-hint {
+      text-align: center;
+      padding: 1rem 0;
+      font-style: italic;
+    }
+
+    .panel-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .panel-row:last-child {
+      border-bottom: none;
+    }
+
+    .panel-label {
+      color: var(--color-muted-fg);
+    }
+
+    .panel-value {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--color-fg);
+    }
+
+    .panel-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .panel-btn {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--color-border);
+      background: white;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--color-fg);
+      text-align: left;
+    }
+
+    .panel-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: rgba(40, 86, 191, 0.04);
+    }
+
+    .panel-btn.warn {
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #DC2626;
+    }
+
+    .panel-btn.warn:hover {
+      background: rgba(239, 68, 68, 0.06);
+      border-color: #DC2626;
+    }
+
     /* Proof Section */
     .proof {
       padding: 6rem 2rem;
-      background: linear-gradient(180deg, #E8F0FE 0%, var(--color-bg) 100%);
+      background: linear-gradient(180deg, var(--color-hero-end) 0%, var(--color-bg) 100%);
     }
 
     .proof-grid {
@@ -626,15 +782,37 @@
             <div class="legend-dot hazard"></div>
             <span>Hazard Zones</span>
           </div>
+          <div class="legend-item">
+            <div class="legend-dot point"></div>
+            <span>Waypoints</span>
+          </div>
         </div>
         <div class="viz-controls">
+          <div class="wind-control">
+            <span>Wind:</span>
+            <input type="range" id="wind-dir" min="0" max="360" value="45" title="Wind Direction">
+            <span id="wind-dir-val">45&deg;</span>
+            <input type="range" id="wind-spd" min="0" max="30" value="12" title="Wind Speed (kn)">
+            <span id="wind-spd-val">12 kn</span>
+          </div>
           <button class="control-btn active" onclick="setLayer('all')">All</button>
           <button class="control-btn" onclick="setLayer('ships')">Ships</button>
           <button class="control-btn" onclick="setLayer('icebergs')">Icebergs</button>
           <button class="control-btn" onclick="toggleAnimation()">Pause</button>
         </div>
       </div>
-      <canvas id="map-canvas"></canvas>
+      <div class="map-wrapper">
+        <canvas id="map-canvas"></canvas>
+        <div class="ship-panel" id="ship-panel">
+          <div class="ship-panel-header">
+            <h4 id="panel-ship-name">Select a Ship</h4>
+            <span class="ship-panel-close" onclick="closeShipPanel()">&times;</span>
+          </div>
+          <div class="ship-panel-body" id="ship-panel-body">
+            <p class="ship-panel-hint">Hover over a ship and click to view details and controls.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -716,6 +894,12 @@
   </footer>
 
   <script>
+    // ---- Canvas color constants (match CSS vars) ----
+    const C_HERO_BG = '#FAFBFC';
+    const C_HERO_GRID = '#E2E8F0';
+    const C_MAP_OCEAN = '#E8F4FD';
+    const C_MAP_GRID = '#C8DDF0';
+
     // ==========================================
     // HERO CANVAS - Animated Particle Map
     // ==========================================
@@ -731,7 +915,6 @@
     resizeHeroCanvas();
     window.addEventListener('resize', resizeHeroCanvas);
 
-    // Ships and icebergs for hero
     const heroShips = [];
     const heroIcebergs = [];
 
@@ -758,11 +941,10 @@
     }
 
     function drawHero() {
-      heroCtx.fillStyle = '#FAFBFC';
+      heroCtx.fillStyle = C_HERO_BG;
       heroCtx.fillRect(0, 0, heroCanvas.width, heroCanvas.height);
 
-      // Draw grid lines
-      heroCtx.strokeStyle = '#E2E8F0';
+      heroCtx.strokeStyle = C_HERO_GRID;
       heroCtx.lineWidth = 0.5;
       for (let x = 0; x < heroCanvas.width; x += 40) {
         heroCtx.beginPath();
@@ -777,54 +959,42 @@
         heroCtx.stroke();
       }
 
-      // Draw icebergs
       heroIcebergs.forEach(ice => {
         ice.x += ice.vx;
         ice.y += ice.vy;
         ice.pulse += 0.02;
-
         if (ice.x < 0) ice.x = heroCanvas.width;
         if (ice.x > heroCanvas.width) ice.x = 0;
         if (ice.y < 0) ice.y = heroCanvas.height;
         if (ice.y > heroCanvas.height) ice.y = 0;
-
         const pulseSize = ice.size + Math.sin(ice.pulse) * 1.5;
-        
         heroCtx.beginPath();
         heroCtx.arc(ice.x, ice.y, pulseSize, 0, Math.PI * 2);
         heroCtx.fillStyle = 'rgba(85, 163, 248, 0.2)';
         heroCtx.fill();
-        
         heroCtx.beginPath();
         heroCtx.arc(ice.x, ice.y, pulseSize * 0.6, 0, Math.PI * 2);
         heroCtx.fillStyle = 'rgba(85, 163, 248, 0.5)';
         heroCtx.fill();
       });
 
-      // Draw ships
       heroShips.forEach(ship => {
         ship.x += ship.vx;
         ship.y += ship.vy;
         ship.angle += 0.005;
-
         if (ship.x < 0) ship.x = heroCanvas.width;
         if (ship.x > heroCanvas.width) ship.x = 0;
         if (ship.y < 0) ship.y = heroCanvas.height;
         if (ship.y > heroCanvas.height) ship.y = 0;
-
-        // Ship trail
         heroCtx.beginPath();
         heroCtx.moveTo(ship.x, ship.y);
         heroCtx.lineTo(ship.x - ship.vx * 20, ship.y - ship.vy * 20);
         heroCtx.strokeStyle = 'rgba(40, 86, 191, 0.2)';
         heroCtx.lineWidth = 2;
         heroCtx.stroke();
-
-        // Ship body
         heroCtx.save();
         heroCtx.translate(ship.x, ship.y);
         heroCtx.rotate(ship.angle);
-        
         heroCtx.beginPath();
         heroCtx.moveTo(0, -ship.size);
         heroCtx.lineTo(ship.size * 0.7, ship.size * 0.5);
@@ -833,7 +1003,6 @@
         heroCtx.closePath();
         heroCtx.fillStyle = '#2856BF';
         heroCtx.fill();
-        
         heroCtx.restore();
       });
 
@@ -842,7 +1011,7 @@
     drawHero();
 
     // ==========================================
-    // MAIN MAP CANVAS - Interactive Visualization
+    // MAIN MAP CANVAS - Interactive Polar Simulation
     // ==========================================
     const mapCanvas = document.getElementById('map-canvas');
     const mapCtx = mapCanvas.getContext('2d');
@@ -859,142 +1028,572 @@
     resizeMapCanvas();
     window.addEventListener('resize', resizeMapCanvas);
 
-    // Map data
+    // ---- COORDINATE SYSTEM ----
+    // Map bounds in degrees: lon [-180, 180], lat [-90, 90]
+    const MAP_BOUNDS = { minLon: -180, maxLon: 180, minLat: -90, maxLat: 90 };
+
+    function lonToX(lon) {
+      return ((lon - MAP_BOUNDS.minLon) / (MAP_BOUNDS.maxLon - MAP_BOUNDS.minLon)) * mapCanvas.width;
+    }
+    function latToY(lat) {
+      return ((MAP_BOUNDS.maxLat - lat) / (MAP_BOUNDS.maxLat - MAP_BOUNDS.minLat)) * mapCanvas.height;
+    }
+    function xToLon(x) {
+      return MAP_BOUNDS.minLon + (x / mapCanvas.width) * (MAP_BOUNDS.maxLon - MAP_BOUNDS.minLon);
+    }
+    function yToLat(y) {
+      return MAP_BOUNDS.maxLat - (y / mapCanvas.height) * (MAP_BOUNDS.maxLat - MAP_BOUNDS.minLat);
+    }
+
+    function formatCoord(lon, lat) {
+      const latDir = lat >= 0 ? 'N' : 'S';
+      const lonDir = lon >= 0 ? 'E' : 'W';
+      return `${Math.abs(lat).toFixed(2)}${latDir}, ${Math.abs(lon).toFixed(2)}${lonDir}`;
+    }
+
+    // ---- WAYPOINTS A, B, C, D ----
+    // Placed at absolute edges of the map
+    const WAYPOINTS = {
+      A: { lon: -179.5, lat: 88.0, label: 'A' },   // top-left edge
+      B: { lon: 179.5, lat: 88.0, label: 'B' },    // top-right edge
+      C: { lon: -179.5, lat: -88.0, label: 'C' },  // bottom-left edge
+      D: { lon: 179.5, lat: -88.0, label: 'D' }    // bottom-right edge
+    };
+
+    // Precompute pixel positions
+    Object.keys(WAYPOINTS).forEach(k => {
+      const wp = WAYPOINTS[k];
+      wp.x = lonToX(wp.lon);
+      wp.y = latToY(wp.lat);
+    });
+
+    function getRandomWaypoint(excludeLabel) {
+      const keys = Object.keys(WAYPOINTS).filter(k => k !== excludeLabel);
+      return WAYPOINTS[keys[Math.floor(Math.random() * keys.length)]];
+    }
+
+    // ---- WIND STATE (interactive) ----
+    let windDirection = 45;   // degrees (meteorological: where wind comes FROM)
+    let windSpeed = 12;       // knots
+
+    document.getElementById('wind-dir').addEventListener('input', (e) => {
+      windDirection = parseInt(e.target.value);
+      document.getElementById('wind-dir-val').innerHTML = windDirection + '&deg;';
+      recalcIcebergPredictions();
+    });
+    document.getElementById('wind-spd').addEventListener('input', (e) => {
+      windSpeed = parseInt(e.target.value);
+      document.getElementById('wind-spd-val').textContent = windSpeed + ' kn';
+      recalcIcebergPredictions();
+    });
+
+    // Convert wind direction (from) to drift vector (towards)
+    function windDriftVector() {
+      const rad = (windDirection + 180) * Math.PI / 180; // drift goes opposite to "from"
+      // Scale factor: ~1-3% of wind speed becomes current drift; larger icebergs drift slower
+      return { dx: Math.cos(rad), dy: Math.sin(rad) };
+    }
+
+    // ---- DATA STRUCTURES ----
     const ships = [];
     const icebergs = [];
     const hazards = [];
 
-    // Initialize ships
-    const shipNames = ['Arctic Explorer', 'Icebreaker Alpha', 'Polar Star', 'Nordic Voyager', 'Frost Guardian', 'Glacier Runner'];
-    shipNames.forEach((name, i) => {
-      ships.push({
-        id: i,
-        name: name,
-        x: 100 + Math.random() * (mapCanvas.width - 200),
-        y: 80 + Math.random() * (mapCanvas.height - 160),
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: 5,
-        heading: Math.random() * Math.PI * 2,
-        trail: []
-      });
-    });
+    function dist(a, b) {
+      const dx = a.x - b.x, dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
 
-    // Initialize icebergs
-    for (let i = 0; i < 20; i++) {
-      icebergs.push({
-        id: i,
-        x: 50 + Math.random() * (mapCanvas.width - 100),
-        y: 50 + Math.random() * (mapCanvas.height - 100),
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.15,
-        size: 8 + Math.random() * 12,
+    function distLL(a, b) {
+      const dlon = a.lon - b.lon;
+      const dlat = a.lat - b.lat;
+      return Math.sqrt(dlon * dlon + dlat * dlat);
+    }
+
+    function segmentIntersectsCircle(x1, y1, x2, y2, cx, cy, r) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const fx = x1 - cx, fy = y1 - cy;
+      const a = dx * dx + dy * dy;
+      const b = 2 * (fx * dx + fy * dy);
+      const c = fx * fx + fy * fy - r * r;
+      let disc = b * b - 4 * a * c;
+      if (disc < 0) return false;
+      disc = Math.sqrt(disc);
+      const t1 = (-b - disc) / (2 * a);
+      const t2 = (-b + disc) / (2 * a);
+      return (t1 >= 0 && t1 <= 1) || (t2 >= 0 && t2 <= 1);
+    }
+
+    // ---- ICEBERG GENERATION ----
+    // Sizes: small (5-12px), medium (13-22px), large (23-35px)
+    const ICEBERG_NAMES = ['B-15', 'A-68', 'C-19', 'D-20', 'E-11', 'F-13', 'G-17', 'H-22'];
+
+    // Evenly spread icebergs using a grid
+    let icebergGridIndex = 0;
+    const ICEBERG_GRID_COLS = 4;
+    const ICEBERG_GRID_ROWS = 3;
+
+    function spawnIcebergEven() {
+      const col = icebergGridIndex % ICEBERG_GRID_COLS;
+      const row = Math.floor(icebergGridIndex / ICEBERG_GRID_COLS) % ICEBERG_GRID_ROWS;
+      icebergGridIndex++;
+
+      const lonStep = (MAP_BOUNDS.maxLon - MAP_BOUNDS.minLon) / ICEBERG_GRID_COLS;
+      const latStep = (MAP_BOUNDS.maxLat - MAP_BOUNDS.minLat) / ICEBERG_GRID_ROWS;
+
+      const lon = MAP_BOUNDS.minLon + col * lonStep + lonStep * 0.2 + Math.random() * lonStep * 0.6;
+      const lat = MAP_BOUNDS.maxLat - row * latStep - latStep * 0.2 - Math.random() * latStep * 0.6;
+      const sizeCat = Math.random();
+      let size, mass, labelSize, dangerRadius;
+      if (sizeCat < 0.35) {
+        size = 10 + Math.random() * 10;
+        mass = 100000 + Math.random() * 500000;
+        labelSize = 'Small';
+        dangerRadius = 0;
+      } else if (sizeCat < 0.70) {
+        size = 22 + Math.random() * 14;
+        mass = 600000 + Math.random() * 2000000;
+        labelSize = 'Medium';
+        dangerRadius = 0;
+      } else {
+        size = 38 + Math.random() * 22;
+        mass = 3000000 + Math.random() * 10000000;
+        labelSize = 'Large';
+        dangerRadius = size * 2.2;
+      }
+      const driftVec = windDriftVector();
+      // Iceberg drift speed = k * windSpeed / sqrt(mass_factor)
+      // Larger = slower. Base factor ~0.02-0.04 of wind speed
+      const driftFactor = (0.025 + Math.random() * 0.015) / Math.sqrt(Math.max(1, size / 8));
+      const driftSpd = windSpeed * driftFactor;
+
+      return {
+        id: Math.floor(Math.random() * 1000000),
+        name: ICEBERG_NAMES[Math.floor(Math.random() * ICEBERG_NAMES.length)],
+        lon: lon,
+        lat: lat,
+        x: lonToX(lon),
+        y: latToY(lat),
+        size: size,
+        mass: mass,
+        labelSize: labelSize,
+        dangerRadius: dangerRadius,
+        driftSpd: driftSpd,
+        driftDir: windDirection,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.002
+        rotSpeed: (Math.random() - 0.5) * 0.002,
+        // Predicted position (60 seconds ahead at current drift)
+        predictedLon: lon + driftVec.dx * driftSpd * 0.001,
+        predictedLat: lat - driftVec.dy * driftSpd * 0.001, // y increases downward
+        predictedX: 0,
+        predictedY: 0,
+        // Trail of actual positions
+        trail: []
+      };
+    }
+
+    function recalcIcebergPredictions() {
+      const driftVec = windDriftVector();
+      icebergs.forEach(ice => {
+        const driftFactor = (0.025 + (ice.size % 5) * 0.003) / Math.sqrt(Math.max(1, ice.size / 8));
+        ice.driftSpd = windSpeed * driftFactor;
+        ice.driftDir = windDirection;
+        // Predict 90 seconds ahead
+        ice.predictedLon = ice.lon + driftVec.dx * ice.driftSpd * 0.0015;
+        ice.predictedLat = ice.lat - driftVec.dy * ice.driftSpd * 0.0015;
+        ice.predictedX = lonToX(ice.predictedLon);
+        ice.predictedY = latToY(ice.predictedLat);
       });
     }
 
-    // Initialize hazard zones
-    for (let i = 0; i < 3; i++) {
-      hazards.push({
+    // Spawn 12 icebergs evenly across the map
+    for (let i = 0; i < 12; i++) {
+      icebergs.push(spawnIcebergEven());
+    }
+    recalcIcebergPredictions();
+
+    // ---- AUTO ICEBERG GENERATION ----
+    // Spawn a new iceberg every 20-35 seconds at a random edge
+    function autoSpawnIceberg() {
+      const edge = Math.floor(Math.random() * 4);
+      let lon, lat;
+      const pad = 2; // degrees from edge
+      switch (edge) {
+        case 0: lon = MAP_BOUNDS.minLon + pad + Math.random() * 20; lat = MAP_BOUNDS.maxLat - pad - Math.random() * 20; break; // top
+        case 1: lon = MAP_BOUNDS.maxLon - pad - Math.random() * 20; lat = MAP_BOUNDS.maxLat - pad - Math.random() * 20; break; // right
+        case 2: lon = MAP_BOUNDS.maxLon - pad - Math.random() * 20; lat = MAP_BOUNDS.minLat + pad + Math.random() * 20; break; // bottom
+        case 3: lon = MAP_BOUNDS.minLon + pad + Math.random() * 20; lat = MAP_BOUNDS.minLat + pad + Math.random() * 20; break; // left
+      }
+      const newIce = spawnIcebergAt(lon, lat);
+      icebergs.push(newIce);
+      // Keep max icebergs at 25
+      if (icebergs.length > 25) {
+        icebergs.shift();
+      }
+      recalcIcebergPredictions();
+      const nextDelay = 20000 + Math.random() * 15000;
+      setTimeout(autoSpawnIceberg, nextDelay);
+    }
+    setTimeout(autoSpawnIceberg, 25000);
+
+    function spawnIcebergAt(lon, lat) {
+      const sizeCat = Math.random();
+      let size, mass, labelSize, dangerRadius;
+      if (sizeCat < 0.35) {
+        size = 10 + Math.random() * 10;
+        mass = 100000 + Math.random() * 500000;
+        labelSize = 'Small';
+        dangerRadius = 0;
+      } else if (sizeCat < 0.70) {
+        size = 22 + Math.random() * 14;
+        mass = 600000 + Math.random() * 2000000;
+        labelSize = 'Medium';
+        dangerRadius = 0;
+      } else {
+        size = 38 + Math.random() * 22;
+        mass = 3000000 + Math.random() * 10000000;
+        labelSize = 'Large';
+        dangerRadius = size * 2.2;
+      }
+      const driftVec = windDriftVector();
+      const driftFactor = (0.025 + Math.random() * 0.015) / Math.sqrt(Math.max(1, size / 8));
+      const driftSpd = windSpeed * driftFactor;
+      return {
+        id: Math.floor(Math.random() * 1000000),
+        name: ICEBERG_NAMES[Math.floor(Math.random() * ICEBERG_NAMES.length)],
+        lon: lon, lat: lat,
+        x: lonToX(lon), y: latToY(lat),
+        size: size, mass: mass, labelSize: labelSize, dangerRadius: dangerRadius,
+        driftSpd: driftSpd, driftDir: windDirection,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.002,
+        predictedLon: lon + driftVec.dx * driftSpd * 0.001,
+        predictedLat: lat - driftVec.dy * driftSpd * 0.001,
+        predictedX: 0, predictedY: 0,
+        trail: []
+      };
+    }
+
+    // ---- HAZARD ZONES ----
+    // Spawn hazards only in areas with high iceberg concentration
+    function spawnHazardNearIce() {
+      if (icebergs.length < 2) return spawnHazardRandom();
+      // Pick a random iceberg, then find nearby icebergs to form a cluster center
+      const seed = icebergs[Math.floor(Math.random() * icebergs.length)];
+      let cx = seed.x, cy = seed.y, count = 1;
+      icebergs.forEach(ice => {
+        if (ice !== seed && dist(ice, seed) < 120) {
+          cx += ice.x; cy += ice.y; count++;
+        }
+      });
+      cx /= count; cy /= count;
+      return {
+        x: cx + (Math.random() - 0.5) * 40,
+        y: cy + (Math.random() - 0.5) * 40,
+        radius: 35 + Math.random() * 25,
+        pulse: Math.random() * Math.PI * 2,
+        spawnTime: Date.now(),
+        lifetime: 8000 + Math.random() * 6000,
+        fading: false
+      };
+    }
+
+    function spawnHazardRandom() {
+      return {
         x: 150 + Math.random() * (mapCanvas.width - 300),
         y: 100 + Math.random() * (mapCanvas.height - 200),
         radius: 40 + Math.random() * 30,
-        pulse: Math.random() * Math.PI * 2
+        pulse: Math.random() * Math.PI * 2,
+        spawnTime: Date.now(),
+        lifetime: 6000 + Math.random() * 7000,
+        fading: false
+      };
+    }
+
+    for (let i = 0; i < 3; i++) hazards.push(spawnHazardNearIce());
+
+    // ---- PATH COMPUTATION ----
+    // Compute path from start to end avoiding icebergs and hazards
+    function computePath(start, end, margin) {
+      margin = margin || 45;
+      const steps = 100;
+      const points = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        points.push({ x: start.x + (end.x - start.x) * t, y: start.y + (end.y - start.y) * t });
+      }
+
+      for (let iter = 0; iter < 25; iter++) {
+        let moved = false;
+        for (let i = 2; i < steps - 2; i++) {
+          let px = points[i].x, py = points[i].y;
+          let fx = 0, fy = 0;
+
+          icebergs.forEach(ice => {
+            const d = dist({ x: px, y: py }, ice);
+            const threshold = ice.size + margin;
+            if (d < threshold && d > 0.1) {
+              const strength = (threshold - d) / threshold;
+              fx += ((px - ice.x) / d) * strength * 20;
+              fy += ((py - ice.y) / d) * strength * 20;
+            }
+          });
+
+          hazards.forEach(h => {
+            const d = dist({ x: px, y: py }, h);
+            const threshold = h.radius + margin;
+            if (d < threshold && d > 0.1) {
+              const strength = (threshold - d) / threshold;
+              fx += ((px - h.x) / d) * strength * 25;
+              fy += ((py - h.y) / d) * strength * 25;
+            }
+          });
+
+          if (Math.abs(fx) > 0.01 || Math.abs(fy) > 0.01) {
+            points[i].x += fx;
+            points[i].y += fy;
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+
+      points[0] = { x: start.x, y: start.y };
+      points[points.length - 1] = { x: end.x, y: end.y };
+
+      for (let pass = 0; pass < 8; pass++) {
+        const smoothed = [points[0]];
+        for (let i = 1; i < points.length - 1; i++) {
+          smoothed.push({
+            x: points[i].x * 0.5 + (points[i - 1].x + points[i + 1].x) * 0.25,
+            y: points[i].y * 0.5 + (points[i - 1].y + points[i + 1].y) * 0.25
+          });
+        }
+        smoothed.push(points[points.length - 1]);
+        for (let i = 0; i < points.length; i++) points[i] = smoothed[i];
+      }
+
+      return points;
+    }
+
+    // Compute two rerouting options: one left-biased, one right-biased
+    function computeRerouteOptions(start, end, avoidIceberg) {
+      const margin1 = 60; // wider berth option
+      const margin2 = 35; // tighter option
+      const path1 = computePath(start, end, margin1);
+      const path2 = computePath(start, end, margin2);
+      return { option1: path1, option2: path2 };
+    }
+
+    // ---- SHIP INITIALIZATION ----
+    const shipNames = ['Arctic Explorer', 'Icebreaker Alpha', 'Polar Star', 'Nordic Voyager'];
+
+    function initShip(name, id) {
+      const startWP = Object.values(WAYPOINTS)[id % 4];
+      const endWP = getRandomWaypoint(startWP.label);
+      const path = computePath(startWP, endWP);
+      const reroutes = computeRerouteOptions(startWP, endWP);
+
+      return {
+        id: id,
+        name: name,
+        x: startWP.x,
+        y: startWP.y,
+        startPoint: { x: startWP.x, y: startWP.y, label: startWP.label },
+        endPoint: { x: endWP.x, y: endWP.y, label: endWP.label },
+        path: path,
+        pathIndex: 0,
+        speed: 0.08 + Math.random() * 0.06, // VERY SLOW for detailed study
+        size: 5,
+        heading: 0,
+        trail: [],
+        rerouteOption1: reroutes.option1,
+        rerouteOption2: reroutes.option2,
+        avoidedIcebergs: [], // list of {iceberg, variance} pairs
+        state: 'cruising' // cruising, rerouting, arrived
+      };
+    }
+
+    shipNames.forEach((name, i) => {
+      ships.push(initShip(name, i));
+    });
+
+    // ---- UPDATE LOOP ----
+    function updateShips() {
+      ships.forEach(ship => {
+        if (ship.pathIndex < ship.path.length - 1) {
+          const target = ship.path[ship.pathIndex + 1];
+          const dx = target.x - ship.x;
+          const dy = target.y - ship.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < ship.speed) {
+            ship.pathIndex++;
+            ship.x = target.x;
+            ship.y = target.y;
+          } else {
+            ship.x += (dx / d) * ship.speed;
+            ship.y += (dy / d) * ship.speed;
+          }
+          ship.heading = Math.atan2(dy, dx) + Math.PI / 2;
+        } else {
+          // Arrived at waypoint - pick new destination
+          const currentLabel = ship.endPoint.label;
+          const newEnd = getRandomWaypoint(currentLabel);
+          const newStart = { x: ship.x, y: ship.y, label: currentLabel };
+          ship.startPoint = newStart;
+          ship.endPoint = { x: newEnd.x, y: newEnd.y, label: newEnd.label };
+          ship.path = computePath(newStart, newEnd);
+          const reroutes = computeRerouteOptions(newStart, newEnd);
+          ship.rerouteOption1 = reroutes.option1;
+          ship.rerouteOption2 = reroutes.option2;
+          ship.pathIndex = 0;
+          ship.avoidedIcebergs = [];
+        }
+
+        // Check proximity to icebergs for avoidance tracking
+        ship.avoidedIcebergs = [];
+        icebergs.forEach(ice => {
+          const d = dist(ship, ice);
+          if (d < ice.size + 80) {
+            // This ship is near this iceberg
+            // Compute how much variance from straight line
+            const straightDist = dist(ship.startPoint, ship.endPoint);
+            const pathDist = ship.path.length * 0.5; // rough estimate
+            const variance = Math.max(0, pathDist - straightDist);
+            ship.avoidedIcebergs.push({
+              iceberg: ice,
+              distance: d,
+              variance: variance
+            });
+          }
+        });
+
+        ship.trail.push({ x: ship.x, y: ship.y });
+        if (ship.trail.length > 60) ship.trail.shift();
       });
     }
 
+    function updateIcebergs() {
+      const driftVec = windDriftVector();
+      icebergs.forEach(ice => {
+        // Update current position based on drift
+        const dx = driftVec.dx * ice.driftSpd * 0.05;
+        const dy = -driftVec.dy * ice.driftSpd * 0.05; // y downward
+        ice.x += dx;
+        ice.y += dy;
+        ice.lon = xToLon(ice.x);
+        ice.lat = yToLat(ice.y);
+        ice.rotation += ice.rotSpeed;
+
+        // Trail
+        ice.trail.push({ x: ice.x, y: ice.y, lon: ice.lon, lat: ice.lat });
+        if (ice.trail.length > 80) ice.trail.shift();
+
+        // Recalculate prediction
+        ice.predictedLon = ice.lon + driftVec.dx * ice.driftSpd * 0.0015;
+        ice.predictedLat = ice.lat - driftVec.dy * ice.driftSpd * 0.0015;
+        ice.predictedX = lonToX(ice.predictedLon);
+        ice.predictedY = latToY(ice.predictedLat);
+      });
+    }
+
+    function updateHazards() {
+      const now = Date.now();
+      for (let i = hazards.length - 1; i >= 0; i--) {
+        const h = hazards[i];
+        h.pulse += 0.03;
+        const age = now - h.spawnTime;
+        if (age > h.lifetime - 1500 && !h.fading) h.fading = true;
+        if (age > h.lifetime) {
+          hazards.splice(i, 1);
+          hazards.push(spawnHazardNearIce());
+        }
+      }
+    }
+
+    // ---- DRAWING ----
     function drawMap() {
-      // Ocean background
-      mapCtx.fillStyle = '#E8F4FD';
+      mapCtx.fillStyle = C_MAP_OCEAN;
       mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
 
-      // Coordinate grid
-      mapCtx.strokeStyle = '#C8DDF0';
+      // Coordinate grid (lat/long)
+      mapCtx.strokeStyle = C_MAP_GRID;
       mapCtx.lineWidth = 0.5;
-      for (let x = 0; x < mapCanvas.width; x += 50) {
+      for (let lon = -180; lon <= 180; lon += 30) {
+        const x = lonToX(lon);
         mapCtx.beginPath();
         mapCtx.moveTo(x, 0);
         mapCtx.lineTo(x, mapCanvas.height);
         mapCtx.stroke();
       }
-      for (let y = 0; y < mapCanvas.height; y += 50) {
+      for (let lat = -90; lat <= 90; lat += 15) {
+        const y = latToY(lat);
         mapCtx.beginPath();
         mapCtx.moveTo(0, y);
         mapCtx.lineTo(mapCanvas.width, y);
         mapCtx.stroke();
       }
 
-      // Latitude/Longitude labels
+      // Coordinate labels
       mapCtx.fillStyle = '#94A3B8';
       mapCtx.font = '10px "Fira Code", monospace';
-      for (let x = 0; x < mapCanvas.width; x += 100) {
-        const lon = ((x / mapCanvas.width) * 360 - 180).toFixed(0);
-        mapCtx.fillText(`${lon}°`, x + 2, mapCanvas.height - 5);
+      for (let lon = -180; lon <= 180; lon += 60) {
+        const x = lonToX(lon);
+        mapCtx.fillText(`${lon}°`, x + 3, mapCanvas.height - 6);
       }
-      for (let y = 0; y < mapCanvas.height; y += 100) {
-        const lat = (90 - (y / mapCanvas.height) * 180).toFixed(0);
-        mapCtx.fillText(`${lat}°`, 5, y + 12);
+      for (let lat = -75; lat <= 75; lat += 30) {
+        const y = latToY(lat);
+        mapCtx.fillText(`${lat}°`, 4, y + 11);
       }
 
       if (!isPaused) {
-        // Update ships
-        ships.forEach(ship => {
-          ship.x += ship.vx;
-          ship.y += ship.vy;
-          ship.heading = Math.atan2(ship.vy, ship.vx) + Math.PI / 2;
-
-          // Bounce off edges
-          if (ship.x < 20 || ship.x > mapCanvas.width - 20) ship.vx *= -1;
-          if (ship.y < 20 || ship.y > mapCanvas.height - 20) ship.vy *= -1;
-
-          // Keep in bounds
-          ship.x = Math.max(20, Math.min(mapCanvas.width - 20, ship.x));
-          ship.y = Math.max(20, Math.min(mapCanvas.height - 20, ship.y));
-
-          // Trail
-          ship.trail.push({ x: ship.x, y: ship.y });
-          if (ship.trail.length > 30) ship.trail.shift();
-        });
-
-        // Update icebergs
-        icebergs.forEach(ice => {
-          ice.x += ice.vx;
-          ice.y += ice.vy;
-          ice.rotation += ice.rotSpeed;
-
-          if (ice.x < 0) ice.x = mapCanvas.width;
-          if (ice.x > mapCanvas.width) ice.x = 0;
-          if (ice.y < 0) ice.y = mapCanvas.height;
-          if (ice.y > mapCanvas.height) ice.y = 0;
-        });
-
-        // Update hazards
-        hazards.forEach(h => {
-          h.pulse += 0.03;
-        });
+        updateShips();
+        updateIcebergs();
+        updateHazards();
       }
+
+      // Draw Waypoints A, B, C, D
+      Object.values(WAYPOINTS).forEach(wp => {
+        mapCtx.beginPath();
+        mapCtx.arc(wp.x, wp.y, 8, 0, Math.PI * 2);
+        mapCtx.fillStyle = '#10B981';
+        mapCtx.fill();
+        mapCtx.strokeStyle = 'white';
+        mapCtx.lineWidth = 2;
+        mapCtx.stroke();
+        mapCtx.fillStyle = '#059669';
+        mapCtx.font = 'bold 13px "Fira Sans", sans-serif';
+        mapCtx.textAlign = 'center';
+        mapCtx.fillText(wp.label, wp.x, wp.y - 14);
+        mapCtx.textAlign = 'left';
+      });
 
       // Draw hazards
       if (currentLayer === 'all' || currentLayer === 'hazards') {
         hazards.forEach(h => {
+          const age = Date.now() - h.spawnTime;
+          const fade = h.fading ? Math.max(0, 1 - (age - (h.lifetime - 1500)) / 1500) : 1;
           const radius = h.radius + Math.sin(h.pulse) * 5;
-          
           mapCtx.beginPath();
           mapCtx.arc(h.x, h.y, radius, 0, Math.PI * 2);
-          mapCtx.fillStyle = 'rgba(187, 81, 6, 0.1)';
+          mapCtx.fillStyle = `rgba(187, 81, 6, ${0.1 * fade})`;
           mapCtx.fill();
-          
           mapCtx.beginPath();
           mapCtx.arc(h.x, h.y, radius * 0.6, 0, Math.PI * 2);
-          mapCtx.strokeStyle = 'rgba(187, 81, 6, 0.3)';
+          mapCtx.strokeStyle = `rgba(187, 81, 6, ${0.3 * fade})`;
           mapCtx.lineWidth = 2;
           mapCtx.setLineDash([5, 5]);
           mapCtx.stroke();
           mapCtx.setLineDash([]);
-
-          // Hazard label
-          mapCtx.fillStyle = '#BB5106';
+          if (h.fading) {
+            const progress = (age - (h.lifetime - 1500)) / 1500;
+            mapCtx.beginPath();
+            mapCtx.arc(h.x, h.y, radius + 8, -Math.PI / 2, -Math.PI / 2 + (1 - progress) * Math.PI * 2);
+            mapCtx.strokeStyle = `rgba(187, 81, 6, ${0.6 * fade})`;
+            mapCtx.lineWidth = 2;
+            mapCtx.stroke();
+          }
+          mapCtx.fillStyle = `rgba(187, 81, 6, ${fade})`;
           mapCtx.font = 'bold 11px "Fira Sans", sans-serif';
           mapCtx.textAlign = 'center';
           mapCtx.fillText('HAZARD', h.x, h.y - radius - 8);
@@ -1005,59 +1604,252 @@
       // Draw icebergs
       if (currentLayer === 'all' || currentLayer === 'icebergs') {
         icebergs.forEach(ice => {
+          const isIceHovered = hoveredEntity && hoveredEntity.id === ice.id && hoveredEntity.type === 'iceberg';
+
+          // Danger zone for large icebergs
+          if (ice.dangerRadius > 0) {
+            mapCtx.beginPath();
+            mapCtx.arc(ice.x, ice.y, ice.dangerRadius, 0, Math.PI * 2);
+            mapCtx.fillStyle = 'rgba(239, 68, 68, 0.08)';
+            mapCtx.fill();
+            mapCtx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
+            mapCtx.lineWidth = 1;
+            mapCtx.setLineDash([4, 4]);
+            mapCtx.stroke();
+            mapCtx.setLineDash([]);
+          }
+
+          // Predicted path line (current -> predicted)
+          mapCtx.beginPath();
+          mapCtx.moveTo(ice.x, ice.y);
+          mapCtx.lineTo(ice.predictedX, ice.predictedY);
+          mapCtx.strokeStyle = 'rgba(85, 163, 248, 0.35)';
+          mapCtx.lineWidth = 1.5;
+          mapCtx.setLineDash([4, 4]);
+          mapCtx.stroke();
+          mapCtx.setLineDash([]);
+
+          // Predicted position marker
+          mapCtx.beginPath();
+          mapCtx.arc(ice.predictedX, ice.predictedY, 5, 0, Math.PI * 2);
+          mapCtx.fillStyle = 'rgba(85, 163, 248, 0.5)';
+          mapCtx.fill();
+          mapCtx.strokeStyle = 'white';
+          mapCtx.lineWidth = 1;
+          mapCtx.stroke();
+
+          // Trail
+          if (ice.trail.length > 1) {
+            mapCtx.beginPath();
+            mapCtx.moveTo(ice.trail[0].x, ice.trail[0].y);
+            for (let i = 1; i < ice.trail.length; i++) {
+              mapCtx.lineTo(ice.trail[i].x, ice.trail[i].y);
+            }
+            mapCtx.strokeStyle = 'rgba(85, 163, 248, 0.15)';
+            mapCtx.lineWidth = 1.5;
+            mapCtx.stroke();
+          }
+
+          // Iceberg body
           mapCtx.save();
           mapCtx.translate(ice.x, ice.y);
           mapCtx.rotate(ice.rotation);
-
-          // Iceberg shape (irregular polygon)
           mapCtx.beginPath();
-          const sides = 6 + Math.floor(Math.random() * 3);
+          const sides = 6 + Math.floor(ice.size % 3);
           for (let i = 0; i < sides; i++) {
             const angle = (i / sides) * Math.PI * 2;
-            const r = ice.size * (0.7 + Math.random() * 0.3);
+            const r = ice.size * (0.75 + Math.sin(i * 2.5) * 0.15);
             const px = Math.cos(angle) * r;
             const py = Math.sin(angle) * r;
             if (i === 0) mapCtx.moveTo(px, py);
             else mapCtx.lineTo(px, py);
           }
           mapCtx.closePath();
-          mapCtx.fillStyle = 'rgba(85, 163, 248, 0.3)';
+          mapCtx.fillStyle = isIceHovered ? 'rgba(85, 163, 248, 0.55)' : 'rgba(85, 163, 248, 0.35)';
           mapCtx.fill();
-          mapCtx.strokeStyle = 'rgba(85, 163, 248, 0.6)';
-          mapCtx.lineWidth = 1.5;
+          mapCtx.strokeStyle = isIceHovered ? 'rgba(85, 163, 248, 0.9)' : 'rgba(85, 163, 248, 0.7)';
+          mapCtx.lineWidth = isIceHovered ? 2.5 : 1.5;
           mapCtx.stroke();
-
-          // Inner highlight
           mapCtx.beginPath();
-          mapCtx.arc(0, 0, ice.size * 0.3, 0, Math.PI * 2);
-          mapCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+          mapCtx.arc(0, 0, ice.size * 0.25, 0, Math.PI * 2);
+          mapCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
           mapCtx.fill();
-
           mapCtx.restore();
+
+          // Size label below
+          mapCtx.fillStyle = isIceHovered ? '#1E3A8A' : '#64748B';
+          mapCtx.font = isIceHovered ? 'bold 10px "Fira Code", monospace' : '9px "Fira Code", monospace';
+          mapCtx.textAlign = 'center';
+          mapCtx.fillText(ice.name + ' ' + ice.labelSize, ice.x, ice.y + ice.size + 14);
+          mapCtx.textAlign = 'left';
+
+          // Iceberg hover tooltip
+          if (isIceHovered) {
+            const tooltipW = 210;
+            let tooltipH = 110;
+            if (ice.dangerRadius > 0) tooltipH += 20;
+            let tx = ice.x + 18;
+            let ty = ice.y - tooltipH - 10;
+            if (tx + tooltipW > mapCanvas.width) tx = ice.x - tooltipW - 15;
+            if (ty < 5) ty = ice.y + ice.size + 20;
+
+            mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+            mapCtx.beginPath();
+            mapCtx.roundRect(tx, ty, tooltipW, tooltipH, 8);
+            mapCtx.fill();
+
+            let ly = ty + 18;
+            mapCtx.fillStyle = 'white';
+            mapCtx.font = 'bold 12px "Fira Sans", sans-serif';
+            mapCtx.fillText(ice.name + ' (' + ice.labelSize + ')', tx + 10, ly);
+            ly += 16;
+
+            mapCtx.font = '10px "Fira Sans", sans-serif';
+            mapCtx.fillStyle = '#94A3B8';
+            mapCtx.fillText('Current: ' + formatCoord(ice.lon, ice.lat), tx + 10, ly);
+            ly += 14;
+            mapCtx.fillText('Predicted: ' + formatCoord(ice.predictedLon, ice.predictedLat), tx + 10, ly);
+            ly += 14;
+            mapCtx.fillText('Drift: ' + ice.driftSpd.toFixed(2) + ' kn at ' + ice.driftDir + '°', tx + 10, ly);
+            ly += 14;
+            mapCtx.fillText('Mass: ' + (ice.mass / 1000000).toFixed(1) + 'M kg', tx + 10, ly);
+            ly += 14;
+            mapCtx.fillText('Size: ' + ice.size.toFixed(1) + ' px radius', tx + 10, ly);
+            ly += 14;
+            if (ice.dangerRadius > 0) {
+              mapCtx.fillStyle = '#FCA5A5';
+              mapCtx.fillText('DANGER ZONE: ' + (ice.dangerRadius * 0.05).toFixed(1) + ' nm', tx + 10, ly);
+            }
+
+            // Pointer
+            if (tx > ice.x) {
+              mapCtx.beginPath();
+              mapCtx.moveTo(tx - 6, ice.y - 4);
+              mapCtx.lineTo(tx, ice.y);
+              mapCtx.lineTo(tx - 6, ice.y + 4);
+              mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+              mapCtx.fill();
+            } else {
+              mapCtx.beginPath();
+              mapCtx.moveTo(tx + tooltipW + 6, ice.y - 4);
+              mapCtx.lineTo(tx + tooltipW, ice.y);
+              mapCtx.lineTo(tx + tooltipW + 6, ice.y + 4);
+              mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+              mapCtx.fill();
+            }
+          }
         });
       }
 
       // Draw ships
       if (currentLayer === 'all' || currentLayer === 'ships') {
         ships.forEach(ship => {
-          // Trail
+          const isHovered = hoveredEntity && hoveredEntity.id === ship.id && hoveredEntity.type === 'ship';
+
+          if (isHovered) {
+            // Draw ship's planned path (full remaining)
+            const startIdx = Math.max(0, ship.pathIndex - 3);
+            mapCtx.beginPath();
+            mapCtx.moveTo(ship.path[startIdx].x, ship.path[startIdx].y);
+            for (let i = startIdx + 1; i < ship.path.length; i++) {
+              mapCtx.lineTo(ship.path[i].x, ship.path[i].y);
+            }
+            mapCtx.strokeStyle = 'rgba(40, 86, 191, 0.45)';
+            mapCtx.lineWidth = 3;
+            mapCtx.setLineDash([6, 4]);
+            mapCtx.stroke();
+            mapCtx.setLineDash([]);
+
+            // Draw reroute option 1 (wider berth) - dashed green
+            mapCtx.beginPath();
+            mapCtx.moveTo(ship.rerouteOption1[0].x, ship.rerouteOption1[0].y);
+            for (let i = 1; i < ship.rerouteOption1.length; i++) {
+              mapCtx.lineTo(ship.rerouteOption1[i].x, ship.rerouteOption1[i].y);
+            }
+            mapCtx.strokeStyle = 'rgba(16, 185, 129, 0.35)';
+            mapCtx.lineWidth = 2;
+            mapCtx.setLineDash([3, 6]);
+            mapCtx.stroke();
+            mapCtx.setLineDash([]);
+
+            // Draw reroute option 2 (tighter) - dashed orange
+            mapCtx.beginPath();
+            mapCtx.moveTo(ship.rerouteOption2[0].x, ship.rerouteOption2[0].y);
+            for (let i = 1; i < ship.rerouteOption2.length; i++) {
+              mapCtx.lineTo(ship.rerouteOption2[i].x, ship.rerouteOption2[i].y);
+            }
+            mapCtx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
+            mapCtx.lineWidth = 2;
+            mapCtx.setLineDash([3, 6]);
+            mapCtx.stroke();
+            mapCtx.setLineDash([]);
+
+            // Draw avoided iceberg paths and variance
+            ship.avoidedIcebergs.forEach(av => {
+              const ice = av.iceberg;
+              // Line from ship to iceberg
+              mapCtx.beginPath();
+              mapCtx.moveTo(ship.x, ship.y);
+              mapCtx.lineTo(ice.x, ice.y);
+              mapCtx.strokeStyle = 'rgba(220, 38, 38, 0.25)';
+              mapCtx.lineWidth = 1;
+              mapCtx.setLineDash([2, 4]);
+              mapCtx.stroke();
+              mapCtx.setLineDash([]);
+
+              // Circle around iceberg showing avoidance zone
+              mapCtx.beginPath();
+              mapCtx.arc(ice.x, ice.y, ice.size + 50, 0, Math.PI * 2);
+              mapCtx.strokeStyle = 'rgba(220, 38, 38, 0.15)';
+              mapCtx.lineWidth = 1;
+              mapCtx.stroke();
+            });
+
+            // Start point marker
+            mapCtx.beginPath();
+            mapCtx.arc(ship.startPoint.x, ship.startPoint.y, 6, 0, Math.PI * 2);
+            mapCtx.fillStyle = '#10B981';
+            mapCtx.fill();
+            mapCtx.strokeStyle = 'white';
+            mapCtx.lineWidth = 2;
+            mapCtx.stroke();
+            mapCtx.fillStyle = '#059669';
+            mapCtx.font = 'bold 11px "Fira Sans", sans-serif';
+            mapCtx.textAlign = 'center';
+            mapCtx.fillText(`START ${ship.startPoint.label}`, ship.startPoint.x, ship.startPoint.y - 12);
+            mapCtx.textAlign = 'left';
+
+            // End point marker
+            mapCtx.beginPath();
+            mapCtx.arc(ship.endPoint.x, ship.endPoint.y, 6, 0, Math.PI * 2);
+            mapCtx.fillStyle = '#EF4444';
+            mapCtx.fill();
+            mapCtx.strokeStyle = 'white';
+            mapCtx.lineWidth = 2;
+            mapCtx.stroke();
+            mapCtx.fillStyle = '#DC2626';
+            mapCtx.font = 'bold 11px "Fira Sans", sans-serif';
+            mapCtx.textAlign = 'center';
+            mapCtx.fillText(`DEST ${ship.endPoint.label}`, ship.endPoint.x, ship.endPoint.y - 12);
+            mapCtx.textAlign = 'left';
+          }
+
+          // Ship trail
           if (ship.trail.length > 1) {
             mapCtx.beginPath();
             mapCtx.moveTo(ship.trail[0].x, ship.trail[0].y);
             for (let i = 1; i < ship.trail.length; i++) {
               mapCtx.lineTo(ship.trail[i].x, ship.trail[i].y);
             }
-            mapCtx.strokeStyle = 'rgba(40, 86, 191, 0.15)';
+            mapCtx.strokeStyle = 'rgba(40, 86, 191, 0.2)';
             mapCtx.lineWidth = 2;
             mapCtx.stroke();
           }
 
-          // Ship
+          // Ship body
           mapCtx.save();
           mapCtx.translate(ship.x, ship.y);
           mapCtx.rotate(ship.heading);
-
-          // Ship body
           mapCtx.beginPath();
           mapCtx.moveTo(0, -ship.size * 2);
           mapCtx.lineTo(ship.size, ship.size);
@@ -1066,8 +1858,6 @@
           mapCtx.closePath();
           mapCtx.fillStyle = '#2856BF';
           mapCtx.fill();
-
-          // Ship highlight
           mapCtx.beginPath();
           mapCtx.moveTo(0, -ship.size * 2);
           mapCtx.lineTo(ship.size * 0.3, -ship.size * 0.5);
@@ -1076,27 +1866,82 @@
           mapCtx.closePath();
           mapCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
           mapCtx.fill();
-
           mapCtx.restore();
 
-          // Ship label on hover
-          if (hoveredEntity && hoveredEntity.id === ship.id && hoveredEntity.type === 'ship') {
-            mapCtx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-            mapCtx.fillRect(ship.x + 12, ship.y - 25, 120, 40);
+          // Hover tooltip
+          if (isHovered) {
+            const tooltipW = 210;
+            let tooltipH = 95;
+            if (ship.avoidedIcebergs.length > 0) tooltipH += ship.avoidedIcebergs.length * 18 + 10;
+            let tx = ship.x + 20;
+            let ty = ship.y - tooltipH + 15;
+            if (tx + tooltipW > mapCanvas.width) tx = ship.x - tooltipW - 15;
+            if (ty < 5) ty = ship.y + 30;
+
+            mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+            mapCtx.beginPath();
+            mapCtx.roundRect(tx, ty, tooltipW, tooltipH, 8);
+            mapCtx.fill();
+
+            let ly = ty + 18;
             mapCtx.fillStyle = 'white';
-            mapCtx.font = 'bold 11px "Fira Sans", sans-serif';
-            mapCtx.fillText(ship.name, ship.x + 18, ship.y - 12);
+            mapCtx.font = 'bold 12px "Fira Sans", sans-serif';
+            mapCtx.fillText(ship.name, tx + 10, ly);
+            ly += 16;
+
             mapCtx.font = '10px "Fira Sans", sans-serif';
             mapCtx.fillStyle = '#94A3B8';
-            mapCtx.fillText(`Speed: ${(Math.sqrt(ship.vx**2 + ship.vy**2) * 10).toFixed(1)} kn`, ship.x + 18, ship.y + 2);
-            
+            const spdKnots = (ship.speed * 5).toFixed(1);
+            mapCtx.fillText(`Speed: ${spdKnots} kn`, tx + 10, ly);
+            ly += 14;
+
+            const shipLon = xToLon(ship.x);
+            const shipLat = yToLat(ship.y);
+            mapCtx.fillText(`Pos: ${formatCoord(shipLon, shipLat)}`, tx + 10, ly);
+            ly += 14;
+
+            const progress = ship.pathIndex / (ship.path.length - 1);
+            mapCtx.fillText(`Progress: ${(progress * 100).toFixed(0)}%`, tx + 10, ly);
+            ly += 14;
+
+            mapCtx.fillText(`Route: ${ship.startPoint.label} -> ${ship.endPoint.label}`, tx + 10, ly);
+            ly += 16;
+
+            if (ship.avoidedIcebergs.length > 0) {
+              mapCtx.fillStyle = '#F87171';
+              mapCtx.font = 'bold 10px "Fira Sans", sans-serif';
+              mapCtx.fillText('Avoiding Icebergs:', tx + 10, ly);
+              ly += 14;
+              mapCtx.font = '10px "Fira Sans", sans-serif';
+              mapCtx.fillStyle = '#FCA5A5';
+              ship.avoidedIcebergs.forEach(av => {
+                const ice = av.iceberg;
+                const nmDist = (av.distance * 0.05).toFixed(1);
+                mapCtx.fillText(`${ice.name} (${ice.labelSize}): ${nmDist}nm away, var +${av.variance.toFixed(0)}px`, tx + 10, ly);
+                ly += 14;
+              });
+            } else {
+              mapCtx.fillStyle = '#86EFAC';
+              mapCtx.font = '10px "Fira Sans", sans-serif';
+              mapCtx.fillText('Clear path - no iceberg avoidance', tx + 10, ly);
+            }
+
             // Pointer
-            mapCtx.beginPath();
-            mapCtx.moveTo(ship.x + 8, ship.y - 5);
-            mapCtx.lineTo(ship.x + 12, ship.y);
-            mapCtx.lineTo(ship.x + 8, ship.y + 5);
-            mapCtx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-            mapCtx.fill();
+            if (tx > ship.x) {
+              mapCtx.beginPath();
+              mapCtx.moveTo(tx - 6, ship.y - 4);
+              mapCtx.lineTo(tx, ship.y);
+              mapCtx.lineTo(tx - 6, ship.y + 4);
+              mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+              mapCtx.fill();
+            } else {
+              mapCtx.beginPath();
+              mapCtx.moveTo(tx + tooltipW + 6, ship.y - 4);
+              mapCtx.lineTo(tx + tooltipW, ship.y);
+              mapCtx.lineTo(tx + tooltipW + 6, ship.y + 4);
+              mapCtx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+              mapCtx.fill();
+            }
           }
         });
       }
@@ -1105,19 +1950,16 @@
       mapCtx.fillStyle = '#64748B';
       mapCtx.font = '11px "Fira Code", monospace';
       mapCtx.fillText('Scale: 1:5,000,000', mapCanvas.width - 130, mapCanvas.height - 15);
-      
       mapCtx.beginPath();
       mapCtx.moveTo(mapCanvas.width - 130, mapCanvas.height - 25);
       mapCtx.lineTo(mapCanvas.width - 50, mapCanvas.height - 25);
       mapCtx.strokeStyle = '#64748B';
       mapCtx.lineWidth = 2;
       mapCtx.stroke();
-      
       mapCtx.beginPath();
       mapCtx.moveTo(mapCanvas.width - 130, mapCanvas.height - 28);
       mapCtx.lineTo(mapCanvas.width - 130, mapCanvas.height - 22);
       mapCtx.stroke();
-      
       mapCtx.beginPath();
       mapCtx.moveTo(mapCanvas.width - 50, mapCanvas.height - 28);
       mapCtx.lineTo(mapCanvas.width - 50, mapCanvas.height - 22);
@@ -1127,23 +1969,157 @@
     }
     drawMap();
 
+    // ---- SHIP PANEL ----
+    let selectedShip = null;
+
+    function updateShipPanel() {
+      const panel = document.getElementById('ship-panel');
+      const body = document.getElementById('ship-panel-body');
+      const title = document.getElementById('panel-ship-name');
+      if (!selectedShip) {
+        panel.classList.remove('active');
+        return;
+      }
+      panel.classList.add('active');
+      title.textContent = selectedShip.name;
+      const shipLon = xToLon(selectedShip.x);
+      const shipLat = yToLat(selectedShip.y);
+      const spdKnots = (selectedShip.speed * 5).toFixed(1);
+      const progress = selectedShip.pathIndex / (selectedShip.path.length - 1);
+      const remaining = dist({ x: selectedShip.x, y: selectedShip.y }, selectedShip.endPoint);
+
+      let html = `
+        <div class="panel-row"><span class="panel-label">Status</span><span class="panel-value">${selectedShip.state}</span></div>
+        <div class="panel-row"><span class="panel-label">Speed</span><span class="panel-value">${spdKnots} kn</span></div>
+        <div class="panel-row"><span class="panel-label">Position</span><span class="panel-value">${formatCoord(shipLon, shipLat)}</span></div>
+        <div class="panel-row"><span class="panel-label">Route</span><span class="panel-value">${selectedShip.startPoint.label} → ${selectedShip.endPoint.label}</span></div>
+        <div class="panel-row"><span class="panel-label">Progress</span><span class="panel-value">${(progress * 100).toFixed(0)}%</span></div>
+        <div class="panel-row"><span class="panel-label">Remaining</span><span class="panel-value">${remaining.toFixed(0)} nm</span></div>
+        <div class="panel-row"><span class="panel-label">Waypoint</span><span class="panel-value">${selectedShip.pathIndex + 1}/${selectedShip.path.length}</span></div>
+      `;
+      if (selectedShip.avoidedIcebergs.length > 0) {
+        html += `<div class="panel-row"><span class="panel-label">Threats</span><span class="panel-value" style="color:#DC2626">${selectedShip.avoidedIcebergs.length} near</span></div>`;
+      }
+      html += `
+        <div class="panel-actions">
+          <button class="panel-btn" onclick="rerouteShip(${selectedShip.id}, 1)">🔄 Use Wide Reroute</button>
+          <button class="panel-btn" onclick="rerouteShip(${selectedShip.id}, 2)">🔄 Use Tight Reroute</button>
+          <button class="panel-btn warn" onclick="emergencyStop(${selectedShip.id})">⚠️ Emergency Stop</button>
+          <button class="panel-btn" onclick="resumeShip(${selectedShip.id})">▶️ Resume Cruise</button>
+          <button class="panel-btn" onclick="nextDestination(${selectedShip.id})">→ Next Destination</button>
+        </div>
+      `;
+      body.innerHTML = html;
+    }
+
+    function closeShipPanel() {
+      selectedShip = null;
+      document.getElementById('ship-panel').classList.remove('active');
+    }
+
+    function rerouteShip(shipId, option) {
+      const ship = ships.find(s => s.id === shipId);
+      if (!ship) return;
+      ship.state = 'rerouting';
+      if (option === 1 && ship.rerouteOption1) {
+        ship.path = ship.rerouteOption1;
+      } else if (option === 2 && ship.rerouteOption2) {
+        ship.path = ship.rerouteOption2;
+      }
+      ship.pathIndex = 0;
+      updateShipPanel();
+    }
+
+    function emergencyStop(shipId) {
+      const ship = ships.find(s => s.id === shipId);
+      if (!ship) return;
+      ship.state = 'stopped';
+      ship._savedSpeed = ship.speed;
+      ship.speed = 0;
+      updateShipPanel();
+    }
+
+    function resumeShip(shipId) {
+      const ship = ships.find(s => s.id === shipId);
+      if (!ship) return;
+      ship.state = 'cruising';
+      ship.speed = ship._savedSpeed || (0.08 + Math.random() * 0.06);
+      updateShipPanel();
+    }
+
+    function nextDestination(shipId) {
+      const ship = ships.find(s => s.id === shipId);
+      if (!ship) return;
+      const currentLabel = ship.endPoint.label;
+      const newEnd = getRandomWaypoint(currentLabel);
+      ship.startPoint = { x: ship.x, y: ship.y, label: currentLabel };
+      ship.endPoint = { x: newEnd.x, y: newEnd.y, label: newEnd.label };
+      ship.path = computePath(ship.startPoint, ship.endPoint);
+      const reroutes = computeRerouteOptions(ship.startPoint, ship.endPoint);
+      ship.rerouteOption1 = reroutes.option1;
+      ship.rerouteOption2 = reroutes.option2;
+      ship.pathIndex = 0;
+      ship.avoidedIcebergs = [];
+      ship.state = 'cruising';
+      updateShipPanel();
+    }
+
+    // Update panel every frame for live data
+    setInterval(() => {
+      if (selectedShip) updateShipPanel();
+    }, 500);
+
     // Mouse interaction
     mapCanvas.addEventListener('mousemove', (e) => {
       const rect = mapCanvas.getBoundingClientRect();
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
-      
+
       hoveredEntity = null;
-      
+
+      // Check ships first
       ships.forEach(ship => {
         const dx = mx - ship.x;
         const dy = my - ship.y;
-        if (Math.sqrt(dx*dx + dy*dy) < 15) {
+        if (Math.sqrt(dx * dx + dy * dy) < 18) {
           hoveredEntity = { type: 'ship', id: ship.id };
         }
       });
-      
+
+      // Then check icebergs
+      if (!hoveredEntity) {
+        icebergs.forEach(ice => {
+          const dx = mx - ice.x;
+          const dy = my - ice.y;
+          if (Math.sqrt(dx * dx + dy * dy) < ice.size + 8) {
+            hoveredEntity = { type: 'iceberg', id: ice.id };
+          }
+        });
+      }
+
       mapCanvas.style.cursor = hoveredEntity ? 'pointer' : 'crosshair';
+    });
+
+    mapCanvas.addEventListener('click', (e) => {
+      const rect = mapCanvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      let clickedShip = null;
+      ships.forEach(ship => {
+        const dx = mx - ship.x;
+        const dy = my - ship.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 20) {
+          clickedShip = ship;
+        }
+      });
+
+      if (clickedShip) {
+        selectedShip = clickedShip;
+        updateShipPanel();
+      } else if (!document.getElementById('ship-panel').contains(e.target)) {
+        // Clicking empty map doesn't close panel - only close button does
+      }
     });
 
     // Controls
@@ -1151,7 +2127,7 @@
       currentLayer = layer;
       document.querySelectorAll('.control-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.textContent.toLowerCase().includes(layer) || 
+        if (btn.textContent.toLowerCase().includes(layer) ||
             (layer === 'all' && btn.textContent === 'All')) {
           btn.classList.add('active');
         }
@@ -1169,11 +2145,11 @@
 
     // Update stats periodically
     setInterval(() => {
-      document.getElementById('stat-ships').textContent = 
+      document.getElementById('stat-ships').textContent =
         Math.floor(20 + Math.random() * 10);
-      document.getElementById('stat-icebergs').textContent = 
+      document.getElementById('stat-icebergs').textContent =
         Math.floor(140 + Math.random() * 30);
-      document.getElementById('stat-alerts').textContent = 
+      document.getElementById('stat-alerts').textContent =
         Math.floor(1 + Math.random() * 5);
     }, 5000);
 
